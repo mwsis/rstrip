@@ -12,6 +12,7 @@
 The **rstrip** program (implemented in [**entry.c**](./entry.c)) is implemented in terms of:
 
 * [**CLASP**](https://github.com/synesissoftware/CLASP) - for command-line handling;
+* [**cstring**](https://github.com/synesissoftware/cstring) - for resizable C-style strings;
 * [**STLSoft**](https://github.com/synesissoftware/STLSoft-1.10) - for CLI utility functions;
 
 Further, the **rstrip_test** program (implemented in [**rstrip_test.cpp**](./rstrip_test.cpp)), which is used only to test the **rstrip** library, also depends on:
@@ -57,6 +58,18 @@ The primary choice for installation is by use of **CMake**.
 
    In this case, you do not need to have installed [**Catch2**](https://github.com/catchorg/Catch2) or [**xTests**](https://github.com/synesissoftware/xTests); otherwise, you will need to do so (as described in [**REQUISITES.md**](./REQUISITES.md)).
 
+   If **STLSoft** has not been installed, its source-tree root can be supplied with the `--stlsoft-root-dir` (or `-s`) option:
+
+    ```bash
+    $ ./prepare_cmake.sh --stlsoft-root-dir ~/open-source/STLSoft
+    ```
+
+   The same source-tree root can be supplied through the `STLSOFT` environment variable:
+
+    ```bash
+    $ STLSOFT=~/open-source/STLSoft ./prepare_cmake.sh
+    ```
+
 3. Run a build of the generated **CMake**-derived build files via the
    **build_cmake.sh** script, as in:
 
@@ -79,9 +92,9 @@ The primary choice for installation is by use of **CMake**.
 
     ```plaintext
     Synesis System Tools
-    rstrip version 0.1.1.0
+    rstrip version 0.1.2.0
     Copyright (c) 2020-2024 Synesis Information Systems
-    Strips any leading whitespace, if present, from input lines
+    Strips any trailing whitespace, if present, from input lines
 
     rstrip [ ... flags/options ... ] [ { <input-file> | - } [ { <output-file> | - } ]]
 
@@ -106,7 +119,7 @@ The primary choice for installation is by use of **CMake**.
    and you will see output such as:
 
    ```plaintext
-    Executing make and then running all test programs
+    Executing build of rstrip (via command `make`) and then running all component and unit test programs
     [ 50%] Built target rstrip
     [100%] Built target rstrip_test
 
@@ -119,7 +132,7 @@ The primary choice for installation is by use of **CMake**.
 
     ```bash
     $ cd ~/open-source/rstrip
-    $ sudo cmake --install ./_build --config Release
+    $ sudo cmake --install ${SIS_CMAKE_BUILD_DIR:-./_build} --config Release
     ```
 
    This can be verified as follows:

@@ -5,7 +5,7 @@
 # Purpose:  Top-level CMake lists file for rstrip
 #
 # Created:  2nd April 2020
-# Updated:  3rd August 2026
+# Updated:  23rd August 2026
 #
 # ######################################################################## #
 
@@ -57,10 +57,16 @@ set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT
 
 # adhere strictly to C and C++ standards plus extensions. These are actually
 # useless since we do not compile anything; they merely state our intention.
-set(CMAKE_C_STANDARD 11)
+if(NOT CMAKE_C_STANDARD)
+
+	set(CMAKE_C_STANDARD 17)
+endif()
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON) # GNU extensions and POSIX standard
-set(CMAKE_CXX_STANDARD 14)
+if(NOT CMAKE_CXX_STANDARD)
+
+	set(CMAKE_CXX_STANDARD 17)
+endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
@@ -138,6 +144,53 @@ option(BUILD_TESTING "Build tests" ON)
 
 
 # ############################
+# STLSoft
+#
+# NOTE: This is resolved before other dependencies because the imported
+# CLASP::core target may reference STLSoft::STLSoft in its link interface,
+# so that target must be available before find_package(CLASP) loads CLASP's
+# target definitions.
+
+if(DEFINED STLSOFT)
+
+	message("-- STLSOFT provided as CMake variable with value '${STLSOFT}'")
+	set(STLSOFT_INCLUDE_DIR "${STLSOFT}/include")
+elseif(DEFINED ENV{STLSOFT})
+
+	message("-- STLSOFT provided as environment variable with value '$ENV{STLSOFT}'")
+	set(STLSOFT_INCLUDE_DIR "$ENV{STLSOFT}/include")
+endif()
+
+if(DEFINED STLSOFT_INCLUDE_DIR)
+
+	if(NOT IS_DIRECTORY "${STLSOFT_INCLUDE_DIR}")
+
+		message(FATAL_ERROR "STLSoft include directory not found: ${STLSOFT_INCLUDE_DIR}")
+	endif()
+
+	if(NOT TARGET STLSoft::STLSoft)
+
+		add_library(STLSoft::STLSoft INTERFACE IMPORTED GLOBAL)
+		set_target_properties(STLSoft::STLSoft PROPERTIES
+			INTERFACE_INCLUDE_DIRECTORIES "${STLSOFT_INCLUDE_DIR}"
+		)
+	endif()
+else()
+
+	set(STLSoft_REQUIRED_VERSION_ 1.11.1)
+
+	find_package(STLSoft ${STLSoft_REQUIRED_VERSION_} REQUIRED)
+
+	message("-- CMake package STLSoft found (version ${STLSoft_VERSION}; ${STLSoft_REQUIRED_VERSION_} requested)")
+endif()
+
+if(DEFINED STLSOFT_INCLUDE_DIR)
+
+	include_directories("${STLSOFT_INCLUDE_DIR}")
+endif()
+
+
+# ############################
 # Catch2
 
 if(BUILD_TESTING)
@@ -180,34 +233,7 @@ find_package(cstring ${cstring_REQUIRED_VERSION_} REQUIRED)
 
 message("-- CMake package cstring found (version ${cstring_VERSION}; ${cstring_REQUIRED_VERSION_} requested)")
 
-
-# ############################
-# STLSoft
-
-if(DEFINED STLSOFT)
-
-	message("-- STLSOFT provided as CMake variable with value '${STLSOFT}'")
-
-	set(STLSOFT_INCLUDE_DIR ${STLSOFT}/include)
-elseif(DEFINED ENV{STLSOFT})
-
-	message("-- STLSOFT provided as environment variable with value '$ENV{STLSOFT}'")
-
-	set(STLSOFT_INCLUDE_DIR $ENV{STLSOFT}/include)
-else()
-
-	set(STLSoft_REQUIRED_VERSION_ 1.11)
-
-	find_package(STLSoft ${STLSoft_REQUIRED_VERSION_} REQUIRED)
-
-	message("-- CMake package STLSoft found (version ${STLSoft_VERSION}; ${STLSoft_REQUIRED_VERSION_} requested)")
-endif()
-
-if(DEFINED STLSOFT_INCLUDE_DIR)
-
-	include_directories(${STLSOFT_INCLUDE_DIR})
-endif()
-
+	find_package(Catch2 ${Catch2_REQUIRED_VERSION_} QUIET)
 
 # ############################
 # xTests
@@ -266,6 +292,11 @@ install(TARGETS ${PROJECT_NAME_LOWER}
 	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
+install(FILES
+	doc/${PROJECT_NAME_LOWER}.1
+	DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
+)
+
 
 # ################################################
 # examples
@@ -316,8 +347,7 @@ endif(BUILD_TESTING)
 # ##########################################################
 # completion
 
-message(NOTICE "Generating CMake build scripts for ${PROJECT_NAME} ${PROJECT_VERSION}, for C${CMAKE_C_STANDARD} C++${CMAKE_CXX_STANDARD}")
+message(NOTICE "Generating CMake build scripts for ${PROJECT_NAME} ${PROJECT_VERSION}, for C${CMAKE_C_STANDARD} C++${CMAKE_CXX_STANDARD}, with build type ${CMAKE_BUILD_TYPE}")
 
 
 # ############################## end of file ############################# #
-
