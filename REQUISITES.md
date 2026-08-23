@@ -17,7 +17,7 @@ The **rstrip** program (implemented in [**entry.c**](./entry.c)) is implemented 
 
 * [**CLASP**](https://github.com/synesissoftware/CLASP) - for command-line handling;
 * [**cstring**](https://github.com/synesissoftware/cstring) - for resizable C-style strings;
-* [**STLSoft**](https://github.com/synesissoftware/STLSoft-1.10) - for CLI utility functions;
+* [**STLSoft**](https://github.com/synesissoftware/) - for CLI utility functions;
 
 Further, the **rstrip_test** program (implemented in [**rstrip_test.cpp**](./rstrip_test.cpp)), which is used only to test the **rstrip** library, also depends on:
 
@@ -82,13 +82,13 @@ $ sudo cmake --build _build/ --target install
 
 The **STLSoft** libraries provide a wide range of compiler/library discrimination and compatibility facilities, operating system API façades, and a number of extended components over and above what is provided in the standard library.
 
-**STLSoft 1.11.1** or later is obtained from **https://github.com/synesissoftware/STLSoft-1.10**, and it provides the means to install via **CMake**, as in the following:
+**STLSoft** (1.11.1 or later) is obtained from **https://github.com/synesissoftware/**, and it provides the means to install via **CMake**, as in the following:
 
 ```bash
 $ mkdir -p ~/open-source
 $ cd ~/open-source
-$ git clone https://github.com/synesissoftware/STLSoft-1.10
-$ cd ~/open-source/STLSoft-1.10
+$ git clone https://github.com/synesissoftware/STLSoft
+$ cd ~/open-source/STLSoft
 $ ./prepare_cmake.sh -m
 $ sudo cmake --install ${SIS_CMAKE_BUILD_DIR:-./_build} --config Release
 ```

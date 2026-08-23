@@ -77,7 +77,7 @@ Defect reports, feature requests, and pull requests are welcome on the [**rstrip
 **rstrip** depends on:
 
 * [**CLASP**](https://github.com/synesissoftware/CLASP);
-* [**STLSoft 1.11.1**](https://github.com/synesissoftware/STLSoft-1.10);
+* [**STLSoft**](https://github.com/synesissoftware/STLSoft);
 * [**cstring**](https://github.com/synesissoftware/cstring);
 
 

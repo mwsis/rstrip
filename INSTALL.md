@@ -13,7 +13,7 @@ The **rstrip** program (implemented in [**entry.c**](./entry.c)) is implemented 
 
 * [**CLASP**](https://github.com/synesissoftware/CLASP) - for command-line handling;
 * [**cstring**](https://github.com/synesissoftware/cstring) - for resizable C-style strings;
-* [**STLSoft**](https://github.com/synesissoftware/STLSoft-1.10) - for CLI utility functions;
+* [**STLSoft**](https://github.com/synesissoftware/STLSoft) - for CLI utility functions;
 
 Further, the **rstrip_test** program (implemented in [**rstrip_test.cpp**](./rstrip_test.cpp)), which is used only to test the **rstrip** library, also depends on:
 
